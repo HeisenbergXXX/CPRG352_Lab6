@@ -11,7 +11,24 @@ public class ShoppingListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
+
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+        String action = request.getParameter("action");
+
+        if (action != null && action.equals("logout")) {
+            session.invalidate();
+            session = request.getSession();
+        }
+
+        if (username == null || username.equals("")) {
+            getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
+        } else {
+            request.setAttribute("username", username);
+            getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp").forward(request, response);
+        }
+//        getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
+
     }
 
     @Override
@@ -23,46 +40,46 @@ public class ShoppingListServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         ArrayList<String> items = new ArrayList<>();
+        String username = request.getParameter("username");
         String action = request.getParameter("action");
+        String item = request.getParameter("item");
+        String itemToRemove = request.getParameter("itemsRadio");
+        String itemSave = request.getParameter("itemSave");
 
         switch (action){
             case "register":
-                String username = request.getParameter("username");
                 if (username == null || username.equals("")) {
                     request.setAttribute("message", "Please enter a username!");
                     rd1.forward(request, response);
                 } else {
                     session.setAttribute("username", username);
-                    session.setAttribute("items", items);
-                    rd2.forward(request, response);
+                    request.setAttribute("username", username);
                 }
                 break;
             case "add":
-                String item = request.getParameter("item");
                 if (item == null || item.equals("")) {
-                    session.setAttribute("message2", "Please enter an item!");
-                    rd2.forward(request, response);
+                    request.setAttribute("message2", "Please enter an item!");
+//                    rd2.forward(request, response);
                 } else {
-                    items = (ArrayList<String>) session.getAttribute("items");
+                    request.setAttribute("message2", "");
+                    items = session.getAttribute("items") == null ? new ArrayList<>() : (ArrayList<String>) session.getAttribute("items");
                     items.add(item);
-                    session.setAttribute("items", items);
-                    request.setAttribute("list", items);
-                    rd2.forward(request, response);
                 }
                 break;
             case "delete":
-                String itemDel = request.getParameter("itemDel");
-                if (itemDel == null || itemDel.equals("")) {
+                if (itemToRemove == null || itemToRemove.equals("")) {
                     request.setAttribute("message2", "Please select an item!");
-                    rd2.forward(request, response);
+//                    rd2.forward(request, response);
+                } else {
+                    request.setAttribute("message2", "");
+                    items = (ArrayList<String>) session.getAttribute("items");
+                    items.remove(itemToRemove);
+//                    request.setAttribute("message2", itemToRemove + " was removed!");
                 }
-                items = (ArrayList<String>) session.getAttribute("items");
-                items.remove(itemDel);
-
-                session.setAttribute("items", items);
-                request.setAttribute("list", items);
-                rd2.forward(request, response);
                 break;
         }
+        session.setAttribute("items", items);
+        request.setAttribute("list", items);
+        rd2.forward(request, response);
     }
 }

@@ -14,7 +14,7 @@
 <body>
     <h1>Shopping List</h1>
     <div>
-      <p>Hello, ${username} <a href="login?logout">Logout</a></p>
+      <p>Hello, ${username} <a href="?action=logout">Logout</a></p>
     </div>
         <h2>List</h2>
     <div>
@@ -30,18 +30,19 @@
     </div>
     <form method="post">
         <div>
-          <c:if test="${username != null}">
-            <p>Hey the fucking JSTL finally worked!</p>
-          </c:if>
+<%--          <c:if test="${username != null}">--%>
+<%--            <p>Hey the freaking JSTL finally worked!</p>--%>
+<%--          </c:if>--%>
           <c:forEach var="item" items="${list}">
-            <p><input type="radio" name="items" value="${item}"> ${item}</p>
+            <input type="radio" name="itemsRadio" value="${item}"> ${item} <br>
           </c:forEach>
         </div>
         <div>
+            <br>
             <c:if test="${list.size()>0}">
                 <input type="submit" value="Delete"/>
                 <input type="hidden" value="delete" name="action">
-                <input type="hidden" value="${item}" name="itemDel">
+<%--                <input type="hidden" value="${item}" name="itemSave">--%>
             </c:if>
         </div>
     </form>
