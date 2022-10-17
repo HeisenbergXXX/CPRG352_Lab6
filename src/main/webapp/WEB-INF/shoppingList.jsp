@@ -33,16 +33,15 @@
 <%--          <c:if test="${username != null}">--%>
 <%--            <p>Hey the freaking JSTL finally worked!</p>--%>
 <%--          </c:if>--%>
-          <c:forEach var="item" items="${list}">
+          <c:forEach var="item" items="${items}">
             <input type="radio" name="itemsRadio" value="${item}"> ${item} <br>
           </c:forEach>
         </div>
         <div>
             <br>
-            <c:if test="${list.size()>0}">
+            <c:if test="${items.size()>0}">
                 <input type="submit" value="Delete"/>
                 <input type="hidden" value="delete" name="action">
-<%--                <input type="hidden" value="${item}" name="itemSave">--%>
             </c:if>
         </div>
     </form>
